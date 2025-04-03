@@ -1,19 +1,27 @@
 package com.fges.model;
 
 /**
- * Représente un article de liste de courses avec un nom et une quantité
+ * Représente un article de liste de courses avec un nom, une quantité et une catégorie
  */
 public class GroceryItem {
     private String name;
     private int quantity;
+    private String category;
 
     public GroceryItem() {
-        // Constructeur vide pour Jackson
+        this.category = "default";
     }
 
     public GroceryItem(String name, int quantity) {
         this.name = name;
         this.quantity = quantity;
+        this.category = "default";
+    }
+
+    public GroceryItem(String name, int quantity, String category) {
+        this.name = name;
+        this.quantity = quantity;
+        this.category = (category != null && !category.isEmpty()) ? category : "default";
     }
 
     public String getName() {
@@ -30,6 +38,14 @@ public class GroceryItem {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = (category != null && !category.isEmpty()) ? category : "default";
     }
 
     /**

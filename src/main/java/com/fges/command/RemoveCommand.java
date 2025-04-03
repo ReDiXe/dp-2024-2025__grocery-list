@@ -2,6 +2,7 @@ package com.fges.command;
 
 import com.fges.model.GroceryItem;
 import com.fges.storage.GroceryListStorage;
+import org.apache.commons.cli.CommandLine;
 
 import java.util.List;
 
@@ -11,15 +12,16 @@ import java.util.List;
 public class RemoveCommand implements Command {
     private final GroceryListStorage storage;
     private final List<String> args;
+    private final CommandLine cmd;
 
-    public RemoveCommand(GroceryListStorage storage, List<String> args) {
+    public RemoveCommand(GroceryListStorage storage, List<String> args, CommandLine cmd) {
         this.storage = storage;
         this.args = args;
+        this.cmd = cmd;
     }
 
     @Override
     public int execute() throws Exception {
-        // Vérifier les arguments
         if (args.size() < 2) {
             System.err.println("Missing arguments");
             return 1;
@@ -27,17 +29,18 @@ public class RemoveCommand implements Command {
 
         String itemName = args.get(1);
 
-        // Charger la liste de courses
+        String category = cmd.getOptionValue("c", "default");
+
         List<GroceryItem> groceryList = storage.load();
 
-        // Supprimer l'article dont le nom correspond exactement
-        boolean removed = groceryList.removeIf(item -> item.getName().equals(itemName));
+        boolean removed = groceryList.removeIf(
+                item -> item.getName().equals(itemName) && item.getCategory().equals(category)
+        );
 
         if (!removed) {
-            System.out.println("Item '" + itemName + "' not found in grocery list");
+            System.out.println("Item '" + itemName + "' not found in category '" + category + "'");
         }
 
-        // Sauvegarder la liste mise à jour
         storage.save(groceryList);
         return 0;
     }

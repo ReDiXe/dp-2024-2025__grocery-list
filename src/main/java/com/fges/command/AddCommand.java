@@ -2,6 +2,7 @@ package com.fges.command;
 
 import com.fges.model.GroceryItem;
 import com.fges.storage.GroceryListStorage;
+import org.apache.commons.cli.CommandLine;
 
 import java.util.List;
 
@@ -11,15 +12,16 @@ import java.util.List;
 public class AddCommand implements Command {
     private final GroceryListStorage storage;
     private final List<String> args;
+    private final CommandLine cmd;
 
-    public AddCommand(GroceryListStorage storage, List<String> args) {
+    public AddCommand(GroceryListStorage storage, List<String> args, CommandLine cmd) {
         this.storage = storage;
         this.args = args;
+        this.cmd = cmd;
     }
 
     @Override
     public int execute() throws Exception {
-        // Vérifier les arguments
         if (args.size() < 3) {
             System.err.println("Missing arguments");
             return 1;
@@ -40,26 +42,23 @@ public class AddCommand implements Command {
             return 1;
         }
 
-        // Charger la liste de courses
+        String category = cmd.getOptionValue("c", "default");
+
         List<GroceryItem> groceryList = storage.load();
 
-        // Vérifier si l'article existe déjà
         boolean itemExists = false;
         for (GroceryItem item : groceryList) {
-            if (item.getName().equals(itemName)) {
-                // Ajouter à la quantité existante
+            if (item.getName().equals(itemName) && item.getCategory().equals(category)) {
                 item.incrementQuantity(quantity);
                 itemExists = true;
                 break;
             }
         }
 
-        // Si l'article n'existe pas, l'ajouter
         if (!itemExists) {
-            groceryList.add(new GroceryItem(itemName, quantity));
+            groceryList.add(new GroceryItem(itemName, quantity, category));
         }
 
-        // Sauvegarder la liste mise à jour
         storage.save(groceryList);
         return 0;
     }

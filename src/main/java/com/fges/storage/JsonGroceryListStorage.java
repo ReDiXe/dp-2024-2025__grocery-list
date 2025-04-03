@@ -2,6 +2,8 @@ package com.fges.storage;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fges.model.GroceryItem;
 import com.fges.util.FormatValidator;
 
@@ -14,9 +16,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
 
 /**
- * Implémentation du stockage en format JSON
+ * Implémentation du stockage en format JSON avec support des catégories
  */
 public class JsonGroceryListStorage implements GroceryListStorage {
     private final String fileName;
@@ -35,77 +38,110 @@ public class JsonGroceryListStorage implements GroceryListStorage {
         List<GroceryItem> groceryList = new ArrayList<>();
 
         if (!Files.exists(filePath)) {
-            return groceryList; // Retourner une liste vide si le fichier n'existe pas
+            return groceryList;
         }
 
-        // Vérifier la compatibilité du format si le fichier existe déjà
         if (Files.size(filePath) > 0) {
             formatValidator.validateFileFormat(filePath, "json");
         }
 
         try {
-            // Lire le fichier JSON comme un Map (clé=nom de l'article, valeur=quantité)
-            Map<String, Integer> groceryMap = objectMapper.readValue(filePath.toFile(),
-                    new TypeReference<Map<String, Integer>>() {});
+            JsonNode rootNode = objectMapper.readTree(filePath.toFile());
 
-            // Convertir le Map en liste d'objets GroceryItem
-            for (Map.Entry<String, Integer> entry : groceryMap.entrySet()) {
-                groceryList.add(new GroceryItem(entry.getKey(), entry.getValue()));
-            }
-        } catch (Exception e) {
-            // Si ça échoue, essayer d'autres formats pour la rétrocompatibilité
-            try {
-                // Essayer de lire comme une liste d'objets GroceryItem (ancien format possible)
-                groceryList = objectMapper.readValue(filePath.toFile(),
-                        new TypeReference<List<GroceryItem>>() {});
-            } catch (Exception e2) {
-                try {
-                    // Si ça échoue encore, essayer de lire comme une liste de chaînes
-                    List<String> oldFormatList = objectMapper.readValue(filePath.toFile(),
-                            new TypeReference<List<String>>() {});
+            if (rootNode.isObject()) {
+                Iterator<Map.Entry<String, JsonNode>> categoryFields = rootNode.fields();
+                while (categoryFields.hasNext()) {
+                    Map.Entry<String, JsonNode> categoryEntry = categoryFields.next();
+                    String category = categoryEntry.getKey();
+                    JsonNode categoryItems = categoryEntry.getValue();
 
-                    // Convertir l'ancien format vers le nouveau format
-                    for (String item : oldFormatList) {
-                        if (item.contains(":")) {
-                            String[] parts = item.split(":");
-                            String name = parts[0].trim();
-                            try {
-                                int quantity = Integer.parseInt(parts[1].trim());
-                                groceryList.add(new GroceryItem(name, quantity));
-                            } catch (NumberFormatException nfe) {
-                                // Ignorer les entrées mal formatées
-                                System.err.println("Warning: Ignoring malformed entry: " + item);
-                            }
-                        } else {
-                            // Si l'item n'a pas de format spécifique, on le considère comme un item de quantité 1
-                            groceryList.add(new GroceryItem(item.trim(), 1));
+                    if (categoryItems.isObject()) {
+                        Iterator<Map.Entry<String, JsonNode>> itemFields = categoryItems.fields();
+                        while (itemFields.hasNext()) {
+                            Map.Entry<String, JsonNode> itemEntry = itemFields.next();
+                            String itemName = itemEntry.getKey();
+                            int quantity = itemEntry.getValue().asInt();
+                            groceryList.add(new GroceryItem(itemName, quantity, category));
                         }
                     }
-                } catch (Exception e3) {
-                    // Si tous les formats échouent, logger l'erreur et retourner une liste vide
-                    System.err.println("Error reading JSON file: " + e.getMessage());
-                    throw new IOException("Failed to parse JSON file in any supported format", e);
+                }
+
+                if (!groceryList.isEmpty()) {
+                    return groceryList;
                 }
             }
-        }
 
-        return groceryList;
+            try {
+                Map<String, Integer> groceryMap = objectMapper.readValue(filePath.toFile(),
+                        new TypeReference<Map<String, Integer>>() {});
+
+                for (Map.Entry<String, Integer> entry : groceryMap.entrySet()) {
+                    groceryList.add(new GroceryItem(entry.getKey(), entry.getValue(), "default"));
+                }
+                return groceryList;
+            } catch (Exception e) {
+                try {
+                    List<GroceryItem> oldItems = objectMapper.readValue(filePath.toFile(),
+                            new TypeReference<List<GroceryItem>>() {});
+
+                    for (GroceryItem item : oldItems) {
+                        if (item.getCategory() == null) {
+                            item.setCategory("default");
+                        }
+                        groceryList.add(item);
+                    }
+                    return groceryList;
+                } catch (Exception e2) {
+                    try {
+                        List<String> oldFormatList = objectMapper.readValue(filePath.toFile(),
+                                new TypeReference<List<String>>() {});
+
+                        for (String item : oldFormatList) {
+                            if (item.contains(":")) {
+                                String[] parts = item.split(":");
+                                String name = parts[0].trim();
+                                try {
+                                    int quantity = Integer.parseInt(parts[1].trim());
+                                    groceryList.add(new GroceryItem(name, quantity, "default"));
+                                } catch (NumberFormatException nfe) {
+                                    System.err.println("Warning: Ignoring malformed entry: " + item);
+                                }
+                            } else {
+                                groceryList.add(new GroceryItem(item.trim(), 1, "default"));
+                            }
+                        }
+                        return groceryList;
+                    } catch (Exception e3) {
+                        System.err.println("Error reading JSON file: " + e.getMessage());
+                        throw new IOException("Failed to parse JSON file in any supported format", e);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error reading JSON file: " + e.getMessage());
+            throw new IOException("Failed to parse JSON file", e);
+        }
     }
 
     @Override
     public void save(List<GroceryItem> groceryList) throws IOException {
-        // Vérifier la compatibilité du format si le fichier existe déjà
         Path filePath = Paths.get(fileName);
         if (Files.exists(filePath) && Files.size(filePath) > 0) {
             formatValidator.validateFileFormat(filePath, "json");
         }
 
-        // Convertir la liste en Map pour le format JSON demandé
-        Map<String, Integer> groceryMap = new HashMap<>();
+        Map<String, Map<String, Integer>> categorizedItems = new HashMap<>();
+
         for (GroceryItem item : groceryList) {
-            groceryMap.put(item.getName(), item.getQuantity());
+            String category = item.getCategory();
+            if (category == null) {
+                category = "default";
+            }
+
+            categorizedItems.putIfAbsent(category, new HashMap<>());
+            categorizedItems.get(category).put(item.getName(), item.getQuantity());
         }
 
-        objectMapper.writeValue(new File(fileName), groceryMap);
+        objectMapper.writeValue(new File(fileName), categorizedItems);
     }
 }

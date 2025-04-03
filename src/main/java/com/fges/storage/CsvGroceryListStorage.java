@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implémentation du stockage en format CSV
+ * Implémentation du stockage en format CSV avec support des catégories
  */
 public class CsvGroceryListStorage implements GroceryListStorage {
     private final String fileName;
@@ -33,20 +33,25 @@ public class CsvGroceryListStorage implements GroceryListStorage {
         List<GroceryItem> groceryList = new ArrayList<>();
 
         if (!Files.exists(filePath)) {
-            return groceryList; // Retourner une liste vide si le fichier n'existe pas
+            return groceryList;
         }
 
-        // Vérifier la compatibilité du format si le fichier existe déjà
         if (Files.size(filePath) > 0) {
             formatValidator.validateFileFormat(filePath, "csv");
         }
 
         try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
-            String[] header = reader.readNext(); // Lire l'en-tête
-            if (header == null || header.length < 2 ||
+            String[] header = reader.readNext();
+
+            boolean hasCategory = false;
+            if (header != null && header.length >= 3 &&
+                    header[0].equalsIgnoreCase("name") &&
+                    header[1].equalsIgnoreCase("quantity") &&
+                    header[2].equalsIgnoreCase("category")) {
+                hasCategory = true;
+            } else if (header == null || header.length < 2 ||
                     !header[0].equalsIgnoreCase("name") ||
                     !header[1].equalsIgnoreCase("quantity")) {
-                // Si l'en-tête n'est pas valide ou inexistant, retourner une liste vide
                 System.err.println("Warning: CSV file has invalid header format");
                 return groceryList;
             }
@@ -57,9 +62,14 @@ public class CsvGroceryListStorage implements GroceryListStorage {
                     try {
                         String name = line[0];
                         int quantity = Integer.parseInt(line[1]);
-                        groceryList.add(new GroceryItem(name, quantity));
+
+                        String category = "default";
+                        if (hasCategory && line.length >= 3 && line[2] != null && !line[2].isEmpty()) {
+                            category = line[2];
+                        }
+
+                        groceryList.add(new GroceryItem(name, quantity, category));
                     } catch (NumberFormatException e) {
-                        // Ignorer les lignes avec une quantité non numérique
                         System.err.println("Warning: Ignoring row with non-numeric quantity: " + line[0]);
                     }
                 }
@@ -73,21 +83,19 @@ public class CsvGroceryListStorage implements GroceryListStorage {
 
     @Override
     public void save(List<GroceryItem> groceryList) throws IOException {
-        // Vérifier la compatibilité du format si le fichier existe déjà
         Path filePath = Paths.get(fileName);
         if (Files.exists(filePath) && Files.size(filePath) > 0) {
             formatValidator.validateFileFormat(filePath, "csv");
         }
 
         try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
-            // Écrire l'en-tête
-            writer.writeNext(new String[]{"name", "quantity"});
+            writer.writeNext(new String[]{"name", "quantity", "category"});
 
-            // Écrire les données
             for (GroceryItem item : groceryList) {
                 writer.writeNext(new String[]{
                         item.getName(),
-                        String.valueOf(item.getQuantity())
+                        String.valueOf(item.getQuantity()),
+                        item.getCategory() != null ? item.getCategory() : "default"
                 });
             }
         }

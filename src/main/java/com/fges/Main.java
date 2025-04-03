@@ -24,7 +24,6 @@ public class Main {
 
     public static int exec(String[] args) throws IOException {
         try {
-            // Parser les arguments de la ligne de commande
             CliParser cliParser = new CliParser();
             CommandLine cmd = cliParser.parse(args);
 
@@ -35,7 +34,6 @@ public class Main {
             String fileName = cmd.getOptionValue("s");
             String format = cmd.getOptionValue("f", "json");
 
-            // Initialiser le stockage approprié en fonction du format
             GroceryListStorage storage;
             if (format.equalsIgnoreCase("json")) {
                 storage = new JsonGroceryListStorage(fileName);
@@ -46,7 +44,6 @@ public class Main {
                 return 1;
             }
 
-            // Obtenir les arguments positionnels
             java.util.List<String> positionalArgs = cmd.getArgList();
             if (positionalArgs.isEmpty()) {
                 System.err.println("Missing Command");
@@ -55,8 +52,7 @@ public class Main {
 
             String commandName = positionalArgs.getFirst();
 
-            // Créer et exécuter la commande appropriée
-            Command command = CommandFactory.getCommand(commandName, storage, positionalArgs);
+            Command command = CommandFactory.getCommand(commandName, storage, positionalArgs, cmd);
             if (command == null) {
                 System.err.println("Unknown command: " + commandName);
                 return 1;

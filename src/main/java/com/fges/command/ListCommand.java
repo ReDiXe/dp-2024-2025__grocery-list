@@ -5,6 +5,9 @@ import com.fges.storage.GroceryListStorage;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.ArrayList;
 
 /**
  * Commande pour afficher la liste de courses
@@ -18,15 +21,33 @@ public class ListCommand implements Command {
 
     @Override
     public int execute() throws Exception {
-        // Charger la liste de courses
         List<GroceryItem> groceryList = storage.load();
 
-        // Trier la liste par ordre alphabétique
-        groceryList.sort(Comparator.comparing(GroceryItem::getName));
+        Map<String, List<GroceryItem>> categorizedItems = new TreeMap<>();
 
-        // Afficher chaque article
         for (GroceryItem item : groceryList) {
-            System.out.println(item);
+            String category = item.getCategory();
+            if (!categorizedItems.containsKey(category)) {
+                categorizedItems.put(category, new ArrayList<>());
+            }
+            categorizedItems.get(category).add(item);
+        }
+
+        for (Map.Entry<String, List<GroceryItem>> entry : categorizedItems.entrySet()) {
+            String category = entry.getKey();
+            List<GroceryItem> items = entry.getValue();
+
+            System.out.println("#" + category + ":");
+
+            items.sort(Comparator.comparing(GroceryItem::getName));
+
+            for (GroceryItem item : items) {
+                System.out.println(item);
+            }
+
+            if (categorizedItems.size() > 1) {
+                System.out.println();
+            }
         }
 
         return 0;

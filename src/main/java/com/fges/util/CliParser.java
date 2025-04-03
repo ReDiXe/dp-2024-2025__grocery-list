@@ -17,9 +17,9 @@ public class CliParser {
         cliOptions = new Options();
         parser = new DefaultParser();
 
-        // Configuration des options acceptées
         cliOptions.addRequiredOption("s", "source", true, "File containing the grocery list");
         cliOptions.addOption("f", "format", true, "Format of the file (json or csv). Default is json");
+        cliOptions.addOption("c", "category", true, "Category of the item. Default is 'default'");
     }
 
     /**
