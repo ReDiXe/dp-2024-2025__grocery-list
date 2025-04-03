@@ -19,6 +19,7 @@ public class ListCommand implements Command {
         this.storage = storage;
     }
 
+    /// exécute la commande
     @Override
     public int execute() throws Exception {
         List<GroceryItem> groceryList = storage.load();

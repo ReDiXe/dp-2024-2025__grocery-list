@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +18,10 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
+/**
+ * Test unitaire de la classe JsonGroceryListStorage
+ */
 public class JsonGroceryListStorageTest {
 
     private static final String TEST_FILE = "test_grocery_list.json";
@@ -201,9 +204,9 @@ public class JsonGroceryListStorageTest {
 
         // Verify
         assertEquals(1, loadedList.size());
-        assertEquals("Salt", loadedList.get(0).getName());
-        assertEquals(1, loadedList.get(0).getQuantity());
-        assertEquals("default", loadedList.get(0).getCategory()); // Should use default category
+        assertEquals("Salt", loadedList.getFirst().getName());
+        assertEquals(1, loadedList.getFirst().getQuantity());
+        assertEquals("default", loadedList.getFirst().getCategory()); // Should use default category
     }
 
     @Test

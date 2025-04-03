@@ -13,6 +13,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * test unitaire de la classe CommandFactory
+ */
 @ExtendWith(MockitoExtension.class)
 public class CommandFactoryTest {
 

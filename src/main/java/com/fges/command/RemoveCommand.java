@@ -20,6 +20,7 @@ public class RemoveCommand implements Command {
         this.cmd = cmd;
     }
 
+    /// exécute la commande
     @Override
     public int execute() throws Exception {
         if (args.size() < 2) {

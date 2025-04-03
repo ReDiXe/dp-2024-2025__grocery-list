@@ -5,16 +5,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Utilitaire pour valider le format des fichiers
+ * Valide le format des fichiers
  */
 public class FormatValidator {
 
-    /**
-     * Vérifie si le format spécifié est compatible avec le contenu du fichier existant
-     * @param filePath Chemin du fichier à vérifier
-     * @param requestedFormat Format demandé par l'utilisateur ("json" ou "csv")
-     * @throws IOException Si le format est incompatible ou en cas d'erreur de lecture
-     */
+    /// Vérifie si le fichier est au format JSON ou CSV
     public void validateFileFormat(Path filePath, String requestedFormat) throws IOException {
         String content = Files.readString(filePath);
         content = content.trim();
@@ -29,20 +24,19 @@ public class FormatValidator {
         }
 
         // Détection simple du format CSV
-        if (content.contains(",") && (content.toLowerCase().startsWith("name,quantity") ||
+        if (content.contains(",") && (content.toLowerCase().startsWith("name,quantity,category") ||
                 content.split("\n").length > 1 && content.split("\n")[0].toLowerCase().contains("name"))) {
             seemsToBeCsv = true;
         }
 
         // Vérification de compatibilité
         if (seemsToBeJson && !requestedFormat.equalsIgnoreCase("json")) {
-            throw new IOException("Le fichier semble être au format JSON, mais vous essayez de l'utiliser avec le format "
-                    + requestedFormat.toUpperCase() + ". Utilisez l'option --format json.");
+            throw new IOException("this file seems to be in JSON format, but you are trying to use it with the format "
+                    + requestedFormat.toUpperCase() + ". use option --format json.");
         }
-
         if (seemsToBeCsv && !requestedFormat.equalsIgnoreCase("csv")) {
-            throw new IOException("Le fichier semble être au format CSV, mais vous essayez de l'utiliser avec le format "
-                    + requestedFormat.toUpperCase() + ". Utilisez l'option --format csv.");
+            throw new IOException("this file seems to be in CSV format, but you are trying to use it with the format "
+                    + requestedFormat.toUpperCase() + ". use option --format csv.");
         }
     }
 }

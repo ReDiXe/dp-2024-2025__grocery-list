@@ -5,7 +5,7 @@ package com.fges.command;
  */
 public interface Command {
     /**
-     * Exécute la commande
+     * Exécute la commande (ajout, suppression, liste)
      * @return code de retour (0 pour succès, autre pour erreur)
      * @throws Exception si une erreur se produit pendant l'exécution
      */

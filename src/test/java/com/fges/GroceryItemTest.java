@@ -3,6 +3,10 @@ package com.fges.model;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+
+/**
+ * test unitaire de la classe GroceryItem
+ */
 public class GroceryItemTest {
 
     @Test

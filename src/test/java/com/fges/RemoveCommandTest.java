@@ -16,11 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+
+/**
+ * test unitaire de la classe RemoveCommand
+ */
 @ExtendWith(MockitoExtension.class)
 public class RemoveCommandTest {
 
@@ -84,7 +87,7 @@ public class RemoveCommandTest {
 
         // Check that our item was removed
         assertEquals(1, groceryList.size());
-        assertEquals("Bread", groceryList.get(0).getName());
+        assertEquals("Bread", groceryList.getFirst().getName());
     }
 
     @Test
@@ -112,7 +115,7 @@ public class RemoveCommandTest {
 
         // Check that our item was removed
         assertEquals(1, groceryList.size());
-        assertEquals("Banana", groceryList.get(0).getName());
+        assertEquals("Banana", groceryList.getFirst().getName());
     }
 
     @Test
@@ -169,7 +172,7 @@ public class RemoveCommandTest {
 
         // Check that list remains unchanged
         assertEquals(1, groceryList.size());
-        assertEquals("Apple", groceryList.get(0).getName());
+        assertEquals("Apple", groceryList.getFirst().getName());
 
         // Verify that the correct message was printed
         String output = outContent.toString();

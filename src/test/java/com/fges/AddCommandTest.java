@@ -17,6 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * test unitaire de la classe AddCommand
+ */
+
+//un objet mock est une imitation d'un objet réel, utilisé pour simuler le comportement d'un objet dans un environnement de test.
 @ExtendWith(MockitoExtension.class)
 public class AddCommandTest {
 
@@ -106,7 +111,7 @@ public class AddCommandTest {
 
         // Check that our item was added to the list
         assertEquals(1, groceryList.size());
-        GroceryItem addedItem = groceryList.get(0);
+        GroceryItem addedItem = groceryList.getFirst();
         assertEquals("Milk", addedItem.getName());
         assertEquals(3, addedItem.getQuantity());
         assertEquals(category, addedItem.getCategory());
@@ -198,7 +203,7 @@ public class AddCommandTest {
 
         // Check that our item was added with default category
         assertEquals(1, groceryList.size());
-        GroceryItem addedItem = groceryList.get(0);
+        GroceryItem addedItem = groceryList.getFirst();
         assertEquals("Eggs", addedItem.getName());
         assertEquals(6, addedItem.getQuantity());
         assertEquals("default", addedItem.getCategory());

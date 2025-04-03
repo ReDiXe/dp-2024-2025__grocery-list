@@ -20,6 +20,7 @@ public class AddCommand implements Command {
         this.cmd = cmd;
     }
 
+    /// Exécute la commande
     @Override
     public int execute() throws Exception {
         if (args.size() < 3) {

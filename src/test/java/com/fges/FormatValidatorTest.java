@@ -12,6 +12,10 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
+/**
+ * Test unitaire de la classe FormatValidator
+ */
 public class FormatValidatorTest {
 
     private static final String JSON_TEST_FILE = "test_json_format.json";

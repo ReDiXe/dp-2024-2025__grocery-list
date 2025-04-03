@@ -12,6 +12,10 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
+/**
+ * Test unitaire de la classe Main
+ */
 public class MainTest {
 
     private static final String TEST_JSON_FILE = "test_grocery.json";

@@ -7,7 +7,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 /**
- * Utilitaire pour analyser les arguments de la ligne de commande
+ * analyse les arguments de la ligne de commande
  */
 public class CliParser {
     private final Options cliOptions;
@@ -17,16 +17,12 @@ public class CliParser {
         cliOptions = new Options();
         parser = new DefaultParser();
 
-        cliOptions.addRequiredOption("s", "source", true, "File containing the grocery list");
-        cliOptions.addOption("f", "format", true, "Format of the file (json or csv). Default is json");
-        cliOptions.addOption("c", "category", true, "Category of the item. Default is 'default'");
+        cliOptions.addRequiredOption("s", "source", true, "ficher avec la liste de courses");
+        cliOptions.addOption("f", "format", true, "Format du fichier (json ou csv). Par défaut 'json'");
+        cliOptions.addOption("c", "category", true, "Catégorie de l'article, par défaut 'default'");
     }
 
-    /**
-     * Parse les arguments de la ligne de commande
-     * @param args Arguments à analyser
-     * @return Objet CommandLine ou null en cas d'erreur
-     */
+    /// parse les arguments de la ligne de commande
     public CommandLine parse(String[] args) {
         try {
             return parser.parse(cliOptions, args);
@@ -36,10 +32,7 @@ public class CliParser {
         }
     }
 
-    /**
-     * Retourne les options configurées pour l'application
-     * @return Options de ligne de commande
-     */
+    /// retourne les options de la ligne de commande
     public Options getOptions() {
         return cliOptions;
     }

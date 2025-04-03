@@ -32,6 +32,7 @@ public class JsonGroceryListStorage implements GroceryListStorage {
         this.formatValidator = new FormatValidator();
     }
 
+    /// charge la liste de courses à partir d'un fichier JSON
     @Override
     public List<GroceryItem> load() throws IOException {
         Path filePath = Paths.get(fileName);
@@ -123,6 +124,7 @@ public class JsonGroceryListStorage implements GroceryListStorage {
         }
     }
 
+    /// saugegarde la liste de courses dans un fichier JSON
     @Override
     public void save(List<GroceryItem> groceryList) throws IOException {
         Path filePath = Paths.get(fileName);

@@ -48,14 +48,12 @@ public class GroceryItem {
         this.category = (category != null && !category.isEmpty()) ? category : "default";
     }
 
-    /**
-     * Incrémente la quantité de l'article par le montant spécifié
-     * @param amount La quantité à ajouter
-     */
+    /// Incrémente la quantité de l'article
     public void incrementQuantity(int amount) {
         this.quantity += amount;
     }
 
+    /// affichage de l'article
     @Override
     public String toString() {
         return name + ": " + quantity;

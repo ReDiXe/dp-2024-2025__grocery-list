@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implémentation du stockage en format CSV avec support des catégories
+ * Implémentation du stockage en format CSV
  */
 public class CsvGroceryListStorage implements GroceryListStorage {
     private final String fileName;
@@ -27,11 +27,13 @@ public class CsvGroceryListStorage implements GroceryListStorage {
         this.formatValidator = new FormatValidator();
     }
 
+    ///charge la liste de courses à partir d'un fichier CSV
     @Override
     public List<GroceryItem> load() throws IOException {
         Path filePath = Paths.get(fileName);
         List<GroceryItem> groceryList = new ArrayList<>();
 
+        // Si le fichier n'existe pas ou est vide, retourner une liste vide
         if (!Files.exists(filePath)) {
             return groceryList;
         }
@@ -40,6 +42,7 @@ public class CsvGroceryListStorage implements GroceryListStorage {
             formatValidator.validateFileFormat(filePath, "csv");
         }
 
+        // Lire le fichier CSV
         try (CSVReader reader = new CSVReader(new FileReader(fileName))) {
             String[] header = reader.readNext();
 
@@ -81,6 +84,7 @@ public class CsvGroceryListStorage implements GroceryListStorage {
         return groceryList;
     }
 
+    /// sauvegarde la liste de courses dans un fichier CSV
     @Override
     public void save(List<GroceryItem> groceryList) throws IOException {
         Path filePath = Paths.get(fileName);
