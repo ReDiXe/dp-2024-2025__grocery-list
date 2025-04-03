@@ -37,13 +37,13 @@ public class JsonGroceryListStorage implements GroceryListStorage {
         Path filePath = Paths.get(fileName);
         List<GroceryItem> groceryList = new ArrayList<>();
 
-        if (!Files.exists(filePath)) {
+        // Si le fichier n'existe pas ou est vide, retourner une liste vide
+        if (!Files.exists(filePath) || Files.size(filePath) == 0) {
             return groceryList;
         }
 
-        if (Files.size(filePath) > 0) {
-            formatValidator.validateFileFormat(filePath, "json");
-        }
+        // Valider le format du fichier
+        formatValidator.validateFileFormat(filePath, "json");
 
         try {
             JsonNode rootNode = objectMapper.readTree(filePath.toFile());

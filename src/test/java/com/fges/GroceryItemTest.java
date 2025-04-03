@@ -1,43 +1,104 @@
-package com.fges;
-
-import static org.junit.jupiter.api.Assertions.*;
+package com.fges.model;
 
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-class GroceryItemTest {
-
-    @Test
-    void testConstructor() {
-        GroceryItem item = new GroceryItem("pommes", 5);
-        assertEquals("pommes", item.getName());
-        assertEquals(5, item.getQuantity());
-    }
+public class GroceryItemTest {
 
     @Test
-    void testDefaultConstructor() {
+    public void shouldCreateDefaultGroceryItem() {
         GroceryItem item = new GroceryItem();
-        assertNull(item.getName());
+        assertEquals("default", item.getCategory());
         assertEquals(0, item.getQuantity());
+        assertNull(item.getName());
     }
 
     @Test
-    void testSetters() {
-        GroceryItem item = new GroceryItem("pommes", 5);
+    public void shouldCreateGroceryItemWithNameAndQuantity() {
+        String name = "Milk";
+        int quantity = 2;
 
-        item.setName("bananes");
-        assertEquals("bananes", item.getName());
+        GroceryItem item = new GroceryItem(name, quantity);
 
-        item.setQuantity(10);
-        assertEquals(10, item.getQuantity());
+        assertEquals(name, item.getName());
+        assertEquals(quantity, item.getQuantity());
+        assertEquals("default", item.getCategory());
     }
 
     @Test
-    void testToString() {
-        GroceryItem item = new GroceryItem("pommes", 5);
-        assertEquals("pommes: 5", item.toString());
+    public void shouldCreateGroceryItemWithNameQuantityAndCategory() {
+        String name = "Bread";
+        int quantity = 1;
+        String category = "Bakery";
 
-        item.setName("bananes");
-        item.setQuantity(3);
-        assertEquals("bananes: 3", item.toString());
+        GroceryItem item = new GroceryItem(name, quantity, category);
+
+        assertEquals(name, item.getName());
+        assertEquals(quantity, item.getQuantity());
+        assertEquals(category, item.getCategory());
+    }
+
+    @Test
+    public void shouldUseDefaultCategoryWhenNullCategoryProvided() {
+        GroceryItem item = new GroceryItem("Apple", 5, null);
+        assertEquals("default", item.getCategory());
+    }
+
+    @Test
+    public void shouldUseDefaultCategoryWhenEmptyCategoryProvided() {
+        GroceryItem item = new GroceryItem("Banana", 3, "");
+        assertEquals("default", item.getCategory());
+    }
+
+    @Test
+    public void shouldIncrementQuantityCorrectly() {
+        GroceryItem item = new GroceryItem("Cheese", 1);
+
+        item.incrementQuantity(2);
+        assertEquals(3, item.getQuantity());
+
+        item.incrementQuantity(5);
+        assertEquals(8, item.getQuantity());
+    }
+
+    @Test
+    public void shouldFormatToStringCorrectly() {
+        GroceryItem item = new GroceryItem("Eggs", 12);
+        assertEquals("Eggs: 12", item.toString());
+    }
+
+    @Test
+    public void shouldSetAndGetNameCorrectly() {
+        GroceryItem item = new GroceryItem();
+        String name = "Chocolate";
+
+        item.setName(name);
+        assertEquals(name, item.getName());
+    }
+
+    @Test
+    public void shouldSetAndGetQuantityCorrectly() {
+        GroceryItem item = new GroceryItem();
+        int quantity = 7;
+
+        item.setQuantity(quantity);
+        assertEquals(quantity, item.getQuantity());
+    }
+
+    @Test
+    public void shouldSetAndGetCategoryCorrectly() {
+        GroceryItem item = new GroceryItem();
+        String category = "Snacks";
+
+        item.setCategory(category);
+        assertEquals(category, item.getCategory());
+    }
+
+    @Test
+    public void shouldUseDefaultCategoryWhenSettingNullCategory() {
+        GroceryItem item = new GroceryItem("Yogurt", 2, "Dairy");
+
+        item.setCategory(null);
+        assertEquals("default", item.getCategory());
     }
 }

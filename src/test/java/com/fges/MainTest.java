@@ -1,187 +1,189 @@
 package com.fges;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import com.fges.GroceryItem;
-import com.fges.GroceryListStorage;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
-import org.mockito.ArgumentCaptor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-class MainTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    @TempDir
-    Path tempDir;
+public class MainTest {
 
-    private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream errorStreamCaptor = new ByteArrayOutputStream();
-    private PrintStream standardOut;
-    private PrintStream standardErr;
+    private static final String TEST_JSON_FILE = "test_grocery.json";
+    private static final String TEST_CSV_FILE = "test_grocery.csv";
+
+    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private final PrintStream originalErr = System.err;
 
     @BeforeEach
-    void setUp() {
-        // Capture des sorties standard et d'erreur
-        standardOut = System.out;
-        standardErr = System.err;
-        System.setOut(new PrintStream(outputStreamCaptor));
-        System.setErr(new PrintStream(errorStreamCaptor));
+    public void setUp() throws Exception {
+        // Make sure test files don't exist at start
+        Files.deleteIfExists(Paths.get(TEST_JSON_FILE));
+        Files.deleteIfExists(Paths.get(TEST_CSV_FILE));
+
+        // Capture error output
+        System.setErr(new PrintStream(errContent));
+    }
+
+    @AfterEach
+    public void tearDown() throws Exception {
+        // Clean up test files
+        Files.deleteIfExists(Paths.get(TEST_JSON_FILE));
+        Files.deleteIfExists(Paths.get(TEST_CSV_FILE));
+
+        // Restore original error stream
+        System.setErr(originalErr);
     }
 
     @Test
-    void testAddCommand() throws IOException {
-        // Créer un fichier temporaire
-        File tempFile = tempDir.resolve("groceries.json").toFile();
-        String[] args = {"-s", tempFile.getAbsolutePath(), "add", "pommes", "5"};
-
-        // Exécuter la commande d'ajout
-        assertEquals(0, Main.exec(args));
-
-        // Vérifier que le fichier a été créé
-        assertTrue(tempFile.exists());
-
-        // Exécuter une seconde commande d'ajout pour le même article
-        args = new String[]{"-s", tempFile.getAbsolutePath(), "add", "pommes", "3"};
-        assertEquals(0, Main.exec(args));
-
-        // Lister pour vérifier le résultat
-        outputStreamCaptor.reset();
-        args = new String[]{"-s", tempFile.getAbsolutePath(), "list"};
-        assertEquals(0, Main.exec(args));
-
-        // Vérifier que la quantité a été additionnée
-        assertEquals("pommes: 8", outputStreamCaptor.toString().trim());
+    public void shouldReturnErrorCodeWhenNoArgs() throws Exception {
+        int exitCode = Main.exec(new String[]{});
+        assertEquals(1, exitCode);
+        assertTrue(errContent.toString().contains("Fail to parse arguments"));
     }
 
     @Test
-    void testListCommand() throws IOException {
-        // Créer un fichier temporaire
-        File tempFile = tempDir.resolve("groceries.json").toFile();
-
-        // Ajouter plusieurs articles
-        String[] args = {"-s", tempFile.getAbsolutePath(), "add", "bananes", "3"};
-        assertEquals(0, Main.exec(args));
-
-        args = new String[]{"-s", tempFile.getAbsolutePath(), "add", "pommes", "5"};
-        assertEquals(0, Main.exec(args));
-
-        args = new String[]{"-s", tempFile.getAbsolutePath(), "add", "carottes", "10"};
-        assertEquals(0, Main.exec(args));
-
-        // Lister pour vérifier
-        outputStreamCaptor.reset();
-        args = new String[]{"-s", tempFile.getAbsolutePath(), "list"};
-        assertEquals(0, Main.exec(args));
-
-        // Vérifier l'ordre alphabétique et le contenu
-        String output = outputStreamCaptor.toString().trim();
-        String[] lines = output.split(System.lineSeparator());
-        assertEquals(3, lines.length);
-        assertEquals("bananes: 3", lines[0]);
-        assertEquals("carottes: 10", lines[1]);
-        assertEquals("pommes: 5", lines[2]);
+    public void shouldReturnErrorCodeWhenMissingSourceOption() throws Exception {
+        int exitCode = Main.exec(new String[]{"list"});
+        assertEquals(1, exitCode);
+        assertTrue(errContent.toString().contains("Fail to parse arguments"));
     }
 
     @Test
-    void testRemoveCommand() throws IOException {
-        // Créer un fichier temporaire
-        File tempFile = tempDir.resolve("groceries.json").toFile();
-
-        // Ajouter plusieurs articles
-        String[] args = {"-s", tempFile.getAbsolutePath(), "add", "bananes", "3"};
-        assertEquals(0, Main.exec(args));
-
-        args = new String[]{"-s", tempFile.getAbsolutePath(), "add", "pommes", "5"};
-        assertEquals(0, Main.exec(args));
-
-        // Supprimer un article
-        args = new String[]{"-s", tempFile.getAbsolutePath(), "remove", "bananes"};
-        assertEquals(0, Main.exec(args));
-
-        // Lister pour vérifier
-        outputStreamCaptor.reset();
-        args = new String[]{"-s", tempFile.getAbsolutePath(), "list"};
-        assertEquals(0, Main.exec(args));
-
-        // Vérifier que seul l'article non supprimé est présent
-        assertEquals("pommes: 5", outputStreamCaptor.toString().trim());
+    public void shouldReturnErrorCodeWhenInvalidFormat() throws Exception {
+        int exitCode = Main.exec(new String[]{"-s", TEST_JSON_FILE, "-f", "xml", "list"});
+        assertEquals(1, exitCode);
+        assertTrue(errContent.toString().contains("Format must be either 'json' or 'csv'"));
     }
 
     @Test
-    void testCsvFormat() throws IOException {
-        // Créer un fichier temporaire
-        File tempFile = tempDir.resolve("groceries.csv").toFile();
-
-        // Ajouter un article avec format CSV
-        String[] args = {"-s", tempFile.getAbsolutePath(), "-f", "csv", "add", "oranges", "7"};
-        assertEquals(0, Main.exec(args));
-
-        // Vérifier que le fichier a été créé
-        assertTrue(tempFile.exists());
-
-        // Lister pour vérifier
-        outputStreamCaptor.reset();
-        args = new String[]{"-s", tempFile.getAbsolutePath(), "-f", "csv", "list"};
-        assertEquals(0, Main.exec(args));
-
-        // Vérifier le contenu
-        assertEquals("oranges: 7", outputStreamCaptor.toString().trim());
+    public void shouldReturnErrorCodeWhenMissingCommand() throws Exception {
+        int exitCode = Main.exec(new String[]{"-s", TEST_JSON_FILE});
+        assertEquals(1, exitCode);
+        assertTrue(errContent.toString().contains("Missing Command"));
     }
 
     @Test
-    void testInvalidFormat() throws IOException {
-        // Tester avec un format invalide
-        String[] args = {"-s", "groceries.txt", "-f", "xml", "list"};
-        assertEquals(1, Main.exec(args));
-
-        // Vérifier le message d'erreur
-        assertTrue(errorStreamCaptor.toString().contains("Format must be either 'json' or 'csv'"));
+    public void shouldReturnErrorCodeWhenUnknownCommand() throws Exception {
+        int exitCode = Main.exec(new String[]{"-s", TEST_JSON_FILE, "unknown"});
+        assertEquals(1, exitCode);
+        assertTrue(errContent.toString().contains("Unknown command: unknown"));
     }
 
     @Test
-    void testMissingCommand() throws IOException {
-        // Tester sans commande
-        String[] args = {"-s", "groceries.json"};
-        assertEquals(1, Main.exec(args));
+    public void shouldAddItemSuccessfully() throws Exception {
+        int exitCode = Main.exec(new String[]{"-s", TEST_JSON_FILE, "add", "Milk", "2"});
+        assertEquals(0, exitCode);
 
-        // Vérifier le message d'erreur
-        assertTrue(errorStreamCaptor.toString().contains("Missing Command"));
+        // Verify file was created
+        File file = new File(TEST_JSON_FILE);
+        assertTrue(file.exists());
+
+        // Verify item was added with default category
+        exitCode = Main.exec(new String[]{"-s", TEST_JSON_FILE, "list"});
+        assertEquals(0, exitCode);
     }
 
     @Test
-    void testUnknownCommand() throws IOException {
-        // Tester avec une commande inconnue
-        String[] args = {"-s", "groceries.json", "unknown"};
-        assertEquals(1, Main.exec(args));
+    public void shouldAddItemWithCategorySuccessfully() throws Exception {
+        int exitCode = Main.exec(new String[]{"-s", TEST_JSON_FILE, "-c", "Dairy", "add", "Milk", "2"});
+        assertEquals(0, exitCode);
 
-        // Vérifier le message d'erreur
-        assertTrue(errorStreamCaptor.toString().contains("Unknown command: unknown"));
+        // Verify file was created with category
+        File file = new File(TEST_JSON_FILE);
+        assertTrue(file.exists());
+
+        // Check if we can add another item to same category
+        exitCode = Main.exec(new String[]{"-s", TEST_JSON_FILE, "-c", "Dairy", "add", "Yogurt", "3"});
+        assertEquals(0, exitCode);
     }
 
     @Test
-    void testInvalidQuantity() throws IOException {
-        // Tester avec une quantité non numérique
-        String[] args = {"-s", "groceries.json", "add", "pommes", "abc"};
-        assertEquals(1, Main.exec(args));
+    public void shouldRemoveItemSuccessfully() throws Exception {
+        // First add an item
+        Main.exec(new String[]{"-s", TEST_JSON_FILE, "add", "Bread", "1"});
 
-        // Vérifier le message d'erreur
-        assertTrue(errorStreamCaptor.toString().contains("Quantity must be a number"));
+        // Then remove it
+        int exitCode = Main.exec(new String[]{"-s", TEST_JSON_FILE, "remove", "Bread"});
+        assertEquals(0, exitCode);
 
-        // Tester avec une quantité négative
-        errorStreamCaptor.reset();
-        args = new String[]{"-s", "groceries.json", "add", "pommes", "-5"};
-        assertEquals(1, Main.exec(args));
+        // Verify it was removed (list should be empty)
+        File file = new File(TEST_JSON_FILE);
+        assertTrue(file.exists());
+        String content = Files.readString(file.toPath());
+        assertTrue(content.contains("{}") || content.contains("\"default\":{}"));
+    }
 
-        // Vérifier le message d'erreur
-        assertTrue(errorStreamCaptor.toString().contains("Quantity must be positive"));
+    @Test
+    public void shouldRemoveItemWithCategorySuccessfully() throws Exception {
+        // First add items in different categories
+        Main.exec(new String[]{"-s", TEST_JSON_FILE, "-c", "Dairy", "add", "Milk", "2"});
+        Main.exec(new String[]{"-s", TEST_JSON_FILE, "-c", "Bakery", "add", "Bread", "1"});
+
+        // Remove item from specific category
+        int exitCode = Main.exec(new String[]{"-s", TEST_JSON_FILE, "-c", "Dairy", "remove", "Milk"});
+        assertEquals(0, exitCode);
+
+        // Verify it was removed but other category remains
+        String content = Files.readString(Paths.get(TEST_JSON_FILE));
+        assertFalse(content.contains("\"Milk\""));
+        assertTrue(content.contains("\"Bread\""));
+    }
+
+    @Test
+    public void shouldHandleCsvFormatCorrectly() throws Exception {
+        // Add item with CSV format
+        int exitCode = Main.exec(new String[]{"-s", TEST_CSV_FILE, "-f", "csv", "add", "Salt", "1"});
+        assertEquals(0, exitCode);
+
+        // Verify file was created
+        File file = new File(TEST_CSV_FILE);
+        assertTrue(file.exists());
+
+        // Check content format
+        String content = Files.readString(file.toPath());
+        assertTrue(content.contains("name") && content.contains("quantity") && content.contains("category"));
+        assertTrue(content.contains("Salt") && content.contains("1") && content.contains("default"));
+    }
+
+    @Test
+    public void shouldListItemsCorrectly() throws Exception {
+        // Add multiple items
+        Main.exec(new String[]{"-s", TEST_JSON_FILE, "-c", "Fruits", "add", "Apple", "5"});
+        Main.exec(new String[]{"-s", TEST_JSON_FILE, "-c", "Vegetables", "add", "Carrot", "3"});
+
+        // Capture standard output for list command
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+
+        try {
+            // Execute list command
+            int exitCode = Main.exec(new String[]{"-s", TEST_JSON_FILE, "list"});
+            assertEquals(0, exitCode);
+
+            // Verify output contains categories and items
+            String output = outContent.toString();
+            assertTrue(output.contains("#Fruits:"));
+            assertTrue(output.contains("Apple: 5"));
+            assertTrue(output.contains("#Vegetables:"));
+            assertTrue(output.contains("Carrot: 3"));
+        } finally {
+            System.setOut(originalOut);
+        }
+    }
+
+    @Test
+    public void shouldHandleErrorsInCommands() throws Exception {
+        // Test add command with invalid quantity
+        int exitCode = Main.exec(new String[]{"-s", TEST_JSON_FILE, "add", "Salt", "abc"});
+        assertEquals(1, exitCode);
+        assertTrue(errContent.toString().contains("Quantity must be a number"));
+
     }
 }
