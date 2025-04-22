@@ -33,10 +33,35 @@ public class Main {
                 return 1;
             }
 
+            /// etape 2: récupération des arguments de ligne de commande
+            java.util.List<String> positionalArgs = cmd.getArgList();
+            if (positionalArgs.isEmpty()) {
+                System.err.println("Missing Command");
+                return 1;
+            }
+
+            String commandName = positionalArgs.getFirst();
+
+            // La commande info est spéciale et n'a pas besoin de stockage
+            if (commandName.equals("info")) {
+                Command command = CommandFactory.getCommand(commandName, null, positionalArgs, cmd);
+                if (command == null) {
+                    System.err.println("Error initializing info command");
+                    return 1;
+                }
+                return command.execute();
+            }
+
+            // Pour les autres commandes, vérifier si le fichier source est spécifié
             String fileName = cmd.getOptionValue("s");
+            if (fileName == null) {
+                System.err.println("Source file required for command: " + commandName);
+                return 1;
+            }
+
             String format = cmd.getOptionValue("f", "json");
 
-            /// etape 2: création de l'instance de stockage (json ou csv)
+            /// etape 3: création de l'instance de stockage (json ou csv)
             GroceryListStorage storage;
             if (format.equalsIgnoreCase("json")) {
                 storage = new JsonGroceryListStorage(fileName);
@@ -46,15 +71,6 @@ public class Main {
                 System.err.println("Format must be either 'json' or 'csv'");
                 return 1;
             }
-
-            /// etape 3: création de l'instance de commande
-            java.util.List<String> positionalArgs = cmd.getArgList();
-            if (positionalArgs.isEmpty()) {
-                System.err.println("Missing Command");
-                return 1;
-            }
-
-            String commandName = positionalArgs.getFirst();
 
             /// etape 4: exécution de la commande
             Command command = CommandFactory.getCommand(commandName, storage, positionalArgs, cmd);

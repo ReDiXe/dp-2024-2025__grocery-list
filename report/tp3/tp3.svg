@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg aria-roledescription="sequence" role="graphics-document document" viewBox="-50 -10 1419 1350" style="max-width: 1419px;" xmlns="http://www.w3.org/2000/svg" width="100%" id="export-svg">
+  <style>@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css"); p {margin: 0;}</style>
+  <defs>
+    <filter id="drop-shadow" height="130%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="2" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.5"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <marker orient="auto" markerHeight="12" markerWidth="12" markerUnits="userSpaceOnUse" refY="5" refX="7.9" id="arrowhead">
+      <path d="M -1 0 L 10 5 L 0 10 z"/>
+    </marker>
+  </defs>
+  
+  <!-- Actors (Top) -->
+  <g>
+    <rect filter="url(#drop-shadow)" data-look="neo" class="actor actor-top" ry="6" rx="6" height="65" width="150" stroke="#666" fill="#eaeaea" y="0" x="0"/>
+    <text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="32.5" x="75">
+      <tspan dy="0" x="75">Utilisateur</tspan>
+    </text>
+  </g>
+  <g>
+    <rect filter="url(#drop-shadow)" data-look="neo" class="actor actor-top" ry="6" rx="6" height="65" width="150" stroke="#666" fill="#eaeaea" y="0" x="240"/>
+    <text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="32.5" x="315">
+      <tspan dy="0" x="315">Main</tspan>
+    </text>
+  </g>
+  <g>
+    <rect filter="url(#drop-shadow)" data-look="neo" class="actor actor-top" ry="6" rx="6" height="65" width="150" stroke="#666" fill="#eaeaea" y="0" x="440"/>
+    <text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="32.5" x="515">
+      <tspan dy="0" x="515">CliParser</tspan>
+    </text>
+  </g>
+  <g>
+    <rect filter="url(#drop-shadow)" data-look="neo" class="actor actor-top" ry="6" rx="6" height="65" width="155" stroke="#666" fill="#eaeaea" y="0" x="640"/>
+    <text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="32.5" x="717.5">
+      <tspan dy="0" x="717.5">CommandFactory</tspan>
+    </text>
+  </g>
+  <g>
+    <rect filter="url(#drop-shadow)" data-look="neo" class="actor actor-top" ry="6" rx="6" height="65" width="250" stroke="#666" fill="#eaeaea" y="0" x="845"/>
+    <text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="32.5" x="970">
+      <tspan dy="0" x="970">Command (Add/List/Remove/Info)</tspan>
+    </text>
+  </g>
+  <g>
+    <rect filter="url(#drop-shadow)" data-look="neo" class="actor actor-top" ry="6" rx="6" height="65" width="174" stroke="#666" fill="#eaeaea" y="0" x="1145"/>
+    <text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="32.5" x="1232">
+      <tspan dy="0" x="1232">GroceryListStorage</tspan>
+    </text>
+  </g>
+  
+  <!-- Lifelines -->
+  <line data-id="User" data-et="life-line" name="User" stroke="#999" stroke-width="0.5px" class="actor-line" y2="1264" x2="75" y1="65" x1="75"/>
+  <line data-id="Main" data-et="life-line" name="Main" stroke="#999" stroke-width="0.5px" class="actor-line" y2="1264" x2="315" y1="65" x1="315"/>
+  <line data-id="CliParser" data-et="life-line" name="CliParser" stroke="#999" stroke-width="0.5px" class="actor-line" y2="1264" x2="515" y1="65" x1="515"/>
+  <line data-id="CommandFactory" data-et="life-line" name="CommandFactory" stroke="#999" stroke-width="0.5px" class="actor-line" y2="1264" x2="717.5" y1="65" x1="717.5"/>
+  <line data-id="Command" data-et="life-line" name="Command" stroke="#999" stroke-width="0.5px" class="actor-line" y2="1264" x2="970" y1="65" x1="970"/>
+  <line data-id="Storage" data-et="life-line" name="Storage" stroke="#999" stroke-width="0.5px" class="actor-line" y2="1264" x2="1232" y1="65" x1="1232"/>
+  
+  <!-- Messages -->
+  <!-- User to Main -->
+  <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="80" x="192">Exécute la commande</text>
+  <line marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" y2="113" x2="308" y1="113" x1="76"/>
+  
+  <!-- Main to CliParser -->
+  <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="128" x="412">parse(args)</text>
+  <line marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" y2="161" x2="508" y1="161" x1="316"/>
+  
+  <!-- CliParser to Main (return) -->
+  <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="176" x="418">CommandLine</text>
+  <line marker-end="url(#arrowhead)" stroke="none" stroke-width="2" class="messageLine1" style="stroke-dasharray: 3px, 3px; fill: none;" y2="209" x2="322" y1="209" x1="514"/>
+  
+  <!-- Main checking for info command -->
+  <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="224" x="316">Vérifie si commande "info"</text>
+  <path marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" d="M 316,257 C 376,247 376,287 316,277"/>
+  
+  <!-- Main creating storage -->
+  <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="302" x="316">Crée storage si nécessaire</text>
+  <path marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" d="M 316,335 C 376,325 376,365 316,355"/>
+  
+  <!-- Main to CommandFactory -->
+  <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="380" x="513">getCommand(commandName, storage, args, cmd)</text>
+  <line marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" y2="413" x2="710.5" y1="413" x1="316"/>
+  
+  <!-- CommandFactory to Main (return) -->
+  <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="428" x="519">Command spécifique</text>
+  <line marker-end="url(#arrowhead)" stroke="none" stroke-width="2" class="messageLine1" style="stroke-dasharray: 3px, 3px; fill: none;" y2="461" x2="322" y1="461" x1="716.5"/>
+  
+  <!-- Main to Command -->
+  <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="476" x="640">execute()</text>
+  <line marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" y2="509" x2="963" y1="509" x1="316"/>
+
+  <!-- Alt block for different command types -->
+  <g>
+    <rect class="labelBox" fill="#eaeaea" stroke="#666" x="845.5" y="530" width="300" height="35" rx="5" ry="5" filter="url(#drop-shadow)"/>
+    <text class="labelText" style="font-size: 16px; font-weight: 600;" text-anchor="middle" y="552" x="996">Alt: Différentes commandes</text>
+    
+    <!-- Add/Remove/List Alt section -->
+    <g>
+      <line class="loopLine" y2="615" x2="1300" y1="615" x1="845.5"/>
+      <line class="loopLine" y2="1014" x2="1300" y1="615" x1="1300"/>
+      <line class="loopLine" y2="1014" x2="1300" y1="1014" x1="845.5"/>
+      <line class="loopLine" y2="1014" x2="845.5" y1="615" x1="845.5"/>
+      <line style="stroke-dasharray: 3px, 3px;" class="loopLine" y2="743" x2="1300" y1="743" x1="845.5"/>
+      <line style="stroke-dasharray: 3px, 3px;" class="loopLine" y2="866" x2="1300" y1="866" x1="845.5"/>
+      
+      <!-- Command to Storage (load) -->
+      <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="625" x="1098">load()</text>
+      <line marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" y2="658" x2="1225" y1="658" x1="971"/>
+      
+      <!-- Storage to Command (return) -->
+      <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="673" x="1104">List&lt;GroceryItem&gt;</text>
+      <line marker-end="url(#arrowhead)" stroke="none" stroke-width="2" class="messageLine1" style="stroke-dasharray: 3px, 3px; fill: none;" y2="706" x2="977" y1="706" x1="1231"/>
+      
+      <!-- Add command operations -->
+      <text class="loopText" style="font-size: 16px; font-weight: 400;" text-anchor="middle" y="633" x="996">[Commande "add"]</text>
+      <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="721" x="971">Ajoute ou modifie l'item</text>
+      <path marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" d="M 971,736 C 1031,726 1031,766 971,756"/>
+      
+      <!-- Remove command operations -->
+      <text class="loopText" style="font-size: 16px; font-weight: 400;" text-anchor="middle" y="761" x="971">[Commande "remove"]</text>
+      <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="788" x="971">Supprime l'item</text>
+      <path marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" d="M 971,821 C 1031,811 1031,851 971,841"/>
+      
+      <!-- List command operations -->
+      <text class="loopText" style="font-size: 16px; font-weight: 400;" text-anchor="middle" y="884" x="971">[Commande "list"]</text>
+      <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="911" x="971">Organise et affiche les items</text>
+      <path marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" d="M 971,944 C 1031,934 1031,974 971,964"/>
+      
+      <!-- Command to Storage (save) -->
+      <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="979" x="1098">save(groceryList)</text>
+      <line marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" y2="1012" x2="1225" y1="1012" x1="971"/>
+    </g>
+    
+    <!-- Info command section -->
+    <g>
+      <line class="loopLine" y2="1121" x2="1300" y1="1014" x1="1300"/>
+      <line class="loopLine" y2="1121" x2="1300" y1="1121" x1="845.5"/>
+      <line class="loopLine" y2="1121" x2="845.5" y1="1014" x1="845.5"/>
+      
+      <text class="loopText" style="font-size: 16px; font-weight: 400;" text-anchor="middle" y="1032" x="971">[Commande "info"]</text>
+      <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="1059" x="971">Affiche date, OS et version Java</text>
+      <path marker-end="url(#arrowhead)" style="fill: none;" stroke="none" stroke-width="2" class="messageLine0" d="M 971,1092 C 1031,1082 1031,1112 971,1102"/>
+    </g>
+  </g>
+  
+  <!-- Command to Main (return) -->
+  <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="1146" x="646">Code de retour</text>
+  <line marker-end="url(#arrowhead)" stroke="none" stroke-width="2" class="messageLine1" style="stroke-dasharray: 3px, 3px; fill: none;" y2="1179" x2="322" y1="1179" x1="969"/>
+  
+  <!-- Main to User (return) -->
+  <text dy="1em" class="messageText" style="font-size: 16px; font-weight: 400;" alignment-baseline="middle" dominant-baseline="middle" text-anchor="middle" y="1194" x="198">Affiche résultat</text>
+  <line marker-end="url(#arrowhead)" stroke="none" stroke-width="2" class="messageLine1" style="stroke-dasharray: 3px, 3px; fill: none;" y2="1227" x2="82" y1="1227" x1="314"/>
+  
+  <!-- Actors (Bottom) -->
+  <g>
+    <rect filter="url(#drop-shadow)" data-look="neo" class="actor actor-bottom" ry="6" rx="6" height="65" width="150" stroke="#666" fill="#eaeaea" y="1264" x="0"/>
+    <text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="1296.5" x="75">
+      <tspan dy="0" x="75">Utilisateur</tspan>
+    </text>
+  </g>
+  <g>
+    <rect filter="url(#drop-shadow)" data-look="neo" class="actor actor-bottom" ry="6" rx="6" height="65" width="150" stroke="#666" fill="#eaeaea" y="1264" x="240"/>
+    <text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="1296.5" x="315">
+      <tspan dy="0" x="315">Main</tspan>
+    </text>
+  </g>
+  <g>
+    <rect filter="url(#drop-shadow)" data-look="neo" class="actor actor-bottom" ry="6" rx="6" height="65" width="150" stroke="#666" fill="#eaeaea" y="1264" x="440"/>
+    <text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="1296.5" x="515">
+      <tspan dy="0" x="515">CliParser</tspan>
+    </text>
+  </g>
+  <g>
+    <rect filter="url(#drop-shadow)" data-look="neo" class="actor actor-bottom" ry="6" rx="6" height="65" width="155" stroke="#666" fill="#eaeaea" y="1264" x="640"/>
+    <text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="1296.5" x="717.5">
+      <tspan dy="0" x="717.5">CommandFactory</tspan>
+    </text>
+  </g>
+  <g>
+    <rect filter="url(#drop-shadow)" data-look="neo" class="actor actor-bottom" ry="6" rx="6" height="65" width="250" stroke="#666" fill="#eaeaea" y="1264" x="845"/>
+    <text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="1296.5" x="970">
+      <tspan dy="0" x="970">Command (Add/List/Remove/Info)</tspan>
+    </text>
+  </g>
+  <g>
+    <rect filter="url(#drop-shadow)" data-look="neo" class="actor actor-bottom" ry="6" rx="6" height="65" width="174" stroke="#666" fill="#eaeaea" y="1264" x="1145"/>
+    <text class="actor actor-box" alignment-baseline="central" dominant-baseline="central" style="text-anchor: middle; font-size: 16px; font-weight: 400;" y="1296.5" x="1232">
+      <tspan dy="0" x="1232">GroceryListStorage</tspan>
+    </text>
+  </g>
+</svg>

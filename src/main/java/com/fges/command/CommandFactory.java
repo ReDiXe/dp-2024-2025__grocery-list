@@ -12,7 +12,7 @@ public class CommandFactory {
 
     /**
      * Crée l'instance de commande appropriée en fonction du nom
-     * @param commandName Nom de la commande (add, list, remove)
+     * @param commandName Nom de la commande (add, list, remove, info)
      * @param storage Instance de stockage à utiliser
      * @param args Arguments de la ligne de commande
      * @param cmd CommandLine pour les options
@@ -23,6 +23,7 @@ public class CommandFactory {
             case "add" -> new AddCommand(storage, args, cmd);
             case "list" -> new ListCommand(storage);
             case "remove" -> new RemoveCommand(storage, args, cmd);
+            case "info" -> new InfoCommand();
             default -> null;
         };
     }
