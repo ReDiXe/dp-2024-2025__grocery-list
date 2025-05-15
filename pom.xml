@@ -16,6 +16,12 @@
             <version>1.9.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>fr.anthonyquere</groupId>
+            <artifactId>grocery-web</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
         <!-- Json -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

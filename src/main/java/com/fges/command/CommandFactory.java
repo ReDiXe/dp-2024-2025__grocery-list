@@ -24,6 +24,7 @@ public class CommandFactory {
             case "list" -> new ListCommand(storage);
             case "remove" -> new RemoveCommand(storage, args, cmd);
             case "info" -> new InfoCommand();
+            case "web" -> new WebCommand(storage, args);
             default -> null;
         };
     }
