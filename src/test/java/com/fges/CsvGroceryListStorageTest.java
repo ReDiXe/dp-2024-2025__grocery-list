@@ -4,39 +4,40 @@ import com.fges.model.GroceryItem;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-
 
 /**
  * test unitaire de la classe CsvGroceryListStorage
  */
 public class CsvGroceryListStorageTest {
 
-    private static final String TEST_FILE = "test_grocery_list.csv";
+    @TempDir
+    Path tempDir; // JUnit 5 crée automatiquement un répertoire temporaire
+
+    private String testFilePath;
     private CsvGroceryListStorage storage;
 
     @BeforeEach
-    public void setUp() throws Exception {
-        storage = new CsvGroceryListStorage(TEST_FILE);
-
-        // Make sure test file doesn't exist at start
-        Files.deleteIfExists(Paths.get(TEST_FILE));
+    public void setUp() {
+        // Créer un fichier de test dans le répertoire temporaire
+        testFilePath = tempDir.resolve("test_grocery_list.csv").toString();
+        storage = new CsvGroceryListStorage(testFilePath);
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
-        // Clean up test file
-        Files.deleteIfExists(Paths.get(TEST_FILE));
+    public void tearDown() {
+        // Plus besoin de supprimer explicitement le fichier,
+        // JUnit 5 nettoie automatiquement le répertoire temporaire
     }
 
     @Test
@@ -50,7 +51,7 @@ public class CsvGroceryListStorageTest {
     @Test
     public void shouldLoadEmptyListWhenFileIsEmpty() throws IOException {
         // Create empty file
-        new File(TEST_FILE).createNewFile();
+        Files.createFile(Path.of(testFilePath));
 
         List<GroceryItem> result = storage.load();
 
@@ -97,7 +98,7 @@ public class CsvGroceryListStorageTest {
     @Test
     public void shouldLoadItemsWithDefaultCategoryWhenCategoryMissing() throws IOException {
         // Create CSV file with no category column
-        try (FileWriter writer = new FileWriter(TEST_FILE)) {
+        try (FileWriter writer = new FileWriter(testFilePath)) {
             writer.write("name,quantity\n");
             writer.write("Salt,1\n");
             writer.write("Pepper,2\n");
@@ -127,7 +128,7 @@ public class CsvGroceryListStorageTest {
     @Test
     public void shouldIgnoreRowsWithNonNumericQuantity() throws IOException {
         // Create CSV file with invalid quantity
-        try (FileWriter writer = new FileWriter(TEST_FILE)) {
+        try (FileWriter writer = new FileWriter(testFilePath)) {
             writer.write("name,quantity,category\n");
             writer.write("Salt,1,Spices\n");
             writer.write("Pepper,abc,Spices\n"); // Invalid quantity
@@ -155,7 +156,7 @@ public class CsvGroceryListStorageTest {
         storage.save(groceryList);
 
         // Check file exists
-        Path filePath = Paths.get(TEST_FILE);
+        Path filePath = Path.of(testFilePath);
         assertTrue(Files.exists(filePath));
 
         // Verify content
